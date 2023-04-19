@@ -2,20 +2,16 @@
   "name": "board-game-scoreboard",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
   "scripts": {
-    "start": "parcel index.html --open",
-    "build": "parcel build index.html"
+    "start": "esbuild src/index.ts --bundle --outfile=build/index.js --watch --servedir=.",
+    "build": "esbuild src/index.ts --bundle --outfile=build/index.js"
   },
   "dependencies": {
-    "lit": "2.6.1",
-    "vite": "4.1.2"
+    "esbuild": "0.17.17",
+    "lit": "2.6.1"
   },
   "devDependencies": {
     "typescript": "4.4.4"
-  },
-  "resolutions": {
-    "@babel/preset-env": "7.13.8"
   },
   "keywords": []
 }

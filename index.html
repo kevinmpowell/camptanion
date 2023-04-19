@@ -2,31 +2,18 @@
   <head>
     <title>Parcel Sandbox</title>
     <meta charset="UTF-8" />
-    <script src="src/roll-button.ts"></script>
-    <script src="src/turn-counter.ts"></script>
-    <script src="src/game-app.ts"></script>
+    <script src="build/index.js"></script>
     <style>
       body {
         background: #333;
       }
     </style>
+    <script>
+      new EventSource('/esbuild').addEventListener('change', () => location.reload())
+    </script>
   </head>
 
   <body>
-    <game-app>
-      <turn-counter>
-        <roll-button highlight number="2"></roll-button>
-        <roll-button number="3"></roll-button>
-        <roll-button number="4"></roll-button>
-        <roll-button number="5"></roll-button>
-        <roll-button number="6"></roll-button>
-        <roll-button number="7"></roll-button>
-        <roll-button number="8"></roll-button>
-        <roll-button number="9"></roll-button>
-        <roll-button number="10"></roll-button>
-        <roll-button number="11"></roll-button>
-        <roll-button number="12"></roll-button>
-      </turn-counter>
-    </game-app>
+    <game-app></game-app>
   </body>
 </html>

@@ -1,5 +1,6 @@
 import { LitElement, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, state, queryAssignedElements } from "lit/decorators.js";
+import { TurnCounter } from "./turn-counter";
 
 type Game = {
   id: number;
@@ -12,6 +13,9 @@ type Game = {
 export class GameApp extends LitElement {
   @state()
   private _gameInProgress = false;
+
+  @queryAssignedElements({selector: 'turn-counter'})
+  _turnCounter!: Array<HTMLElement>;
 
   get gameState() {
     const savedGameState = localStorage.getItem("boardGameScoreboardData");
@@ -72,6 +76,7 @@ export class GameApp extends LitElement {
       const game = this.activeGame;
       game.rollLog.push(e.target.number);
       this.saveGame(game);
+      this.loadActiveGameState();
     }
   }
 
@@ -84,7 +89,7 @@ export class GameApp extends LitElement {
 
   loadActiveGameState() {
     const game = this.activeGame;
-    const turnCounter = this.querySelector("turn-counter");
+    const turnCounter = this.renderRoot.querySelector("turn-counter");
     turnCounter.counter = game.rollLog.length;
     const numberCounts = {
       "2": 0,
@@ -106,12 +111,15 @@ export class GameApp extends LitElement {
       const rollButton = turnCounter.querySelector(
         `roll-button[number="${diceNumber}"]`
       );
+      const numberCount = numberCounts[diceNumber];
+      const frequency = numberCount / game.rollLog.length;
+      console.log("DICE COUNT", diceNumber, frequency);
       rollButton.counter = numberCounts[diceNumber];
+      rollButton.frequency = frequency;
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  firstUpdated() {
     this.loadActiveGameState();
   }
 
@@ -120,7 +128,19 @@ export class GameApp extends LitElement {
       @click="${this.handleGameClick}"
       @undoroll=${this.handleUndo}
     >
-      <slot></slot>
+      <turn-counter>
+        <roll-button highlight number="2"></roll-button>
+        <roll-button number="3"></roll-button>
+        <roll-button number="4"></roll-button>
+        <roll-button number="5"></roll-button>
+        <roll-button number="6"></roll-button>
+        <roll-button number="7"></roll-button>
+        <roll-button number="8"></roll-button>
+        <roll-button number="9"></roll-button>
+        <roll-button number="10"></roll-button>
+        <roll-button number="11"></roll-button>
+        <roll-button number="12"></roll-button>
+      </turn-counter>
     </div>`;
   }
 }

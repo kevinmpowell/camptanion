@@ -5,16 +5,23 @@ import { customElement, property } from "lit/decorators.js";
 export class TurnCounter extends LitElement {
   static styles = css`
     .turn-counter {
-      align-items: center;
+      align-items: flex-start;
       display: flex;
       justify-content: space-between;
+      color: white;
+      font-family: Georgia, serif;
+      font-size: 40px;
     }
 
     .turn-counter__label-wrap {
       width: 120px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
     .turn-counter__label {
       display: block;
+      font-size: 16px;
     }
 
     .turn-counter__roll-buttons {
@@ -28,6 +35,8 @@ export class TurnCounter extends LitElement {
       font-size: 16px;
       height: 40px;
       width: 100%;
+      border-radius: 20px;
+      border: none;
     }
   `;
 
