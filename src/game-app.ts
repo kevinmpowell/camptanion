@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, css } from "lit";
 import { customElement, state, queryAssignedElements } from "lit/decorators.js";
 import { TurnCounter } from "./turn-counter";
 
@@ -11,6 +11,12 @@ type Game = {
 
 @customElement("game-app")
 export class GameApp extends LitElement {
+  static styles = css`
+    .game-app__end-game {
+      margin-block-start: 10px;
+    }
+  `;
+
   @state()
   private _gameInProgress = false;
 
@@ -123,24 +129,31 @@ export class GameApp extends LitElement {
     this.loadActiveGameState();
   }
 
+  handleGameEnd() {
+    const game = this.activeGame;
+    game.end = Date.now();
+    this.saveGame(game);
+  }
+
   render() {
     return html`<div
       @click="${this.handleGameClick}"
       @undoroll=${this.handleUndo}
     >
-      <turn-counter>
-        <roll-button highlight number="2"></roll-button>
-        <roll-button number="3"></roll-button>
-        <roll-button number="4"></roll-button>
-        <roll-button number="5"></roll-button>
-        <roll-button number="6"></roll-button>
-        <roll-button number="7"></roll-button>
-        <roll-button number="8"></roll-button>
-        <roll-button number="9"></roll-button>
-        <roll-button number="10"></roll-button>
-        <roll-button number="11"></roll-button>
-        <roll-button number="12"></roll-button>
-      </turn-counter>
+    <turn-counter>
+      <roll-button highlight number="2"></roll-button>
+      <roll-button number="3"></roll-button>
+      <roll-button number="4"></roll-button>
+      <roll-button number="5"></roll-button>
+      <roll-button number="6"></roll-button>
+      <roll-button number="7"></roll-button>
+      <roll-button number="8"></roll-button>
+      <roll-button number="9"></roll-button>
+      <roll-button number="10"></roll-button>
+      <roll-button number="11"></roll-button>
+      <roll-button number="12"></roll-button>
+    </turn-counter>
+    <button class="game-app__end-game" @click=${this.handleGameEnd}>End Game</button>
     </div>`;
   }
 }
