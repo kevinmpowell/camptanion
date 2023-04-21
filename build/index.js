@@ -1139,7 +1139,6 @@
           playerNames.push({ name: i6.value });
         }
       });
-      console.log("DISPATCH", playerNames);
       const customEvent = new CustomEvent("updateplayernames", { bubbles: true, detail: playerNames });
       this.dispatchEvent(customEvent);
     }
@@ -1172,6 +1171,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      margin-block-end: 10px;
     }
   `;
   __decorateClass([
@@ -1199,7 +1199,7 @@
     }
     render() {
       return x`<div class="game-start-overlay ${this.visible !== false ? "game-start-overlay--visible" : ""}" @updateplayernames=${this.sanityCheck}>
-      <h1>Welcome to Camptanion!</h1>
+      <h1 class="game-start-overlay__header">Welcome to Camptanion!</h1>
       <player-list players="${JSON.stringify(this.players)}"></player-list>
       <button class="game-start-overlay__new-game-button" @click=${this.handleStartGameClick}>Start New Game</button>
     </div>`;
@@ -1213,16 +1213,17 @@
       box-sizing: border-box;
       inset-block-start: 0;
       inset-inline-start: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.9);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       visibility: hidden;
       color: white;
       text-align: center;
       font-family: Georgia, serif;
-      font-size: 48px;
+      font-size: 24px;
+      padding-block-start: 40px;
     }
 
     .game-start-overlay--visible {
@@ -1237,6 +1238,10 @@
       border-radius: 20px;
       padding: 0 20px;
       box-sizing: border-box;
+    }
+
+    .game-start-overlay__header {
+      margin: 0 0 20px 0;
     }
   `;
   __decorateClass([

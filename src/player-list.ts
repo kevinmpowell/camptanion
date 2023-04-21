@@ -15,6 +15,7 @@ export class PlayerList extends LitElement {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      margin-block-end: 10px;
     }
   `;
 
@@ -31,7 +32,6 @@ export class PlayerList extends LitElement {
         playerNames.push({name: i.value});
       }
     });
-    console.log("DISPATCH", playerNames);
     const customEvent = new CustomEvent('updateplayernames', {bubbles: true, detail: playerNames})
     this.dispatchEvent(customEvent)
   }
