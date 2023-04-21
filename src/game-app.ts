@@ -33,9 +33,6 @@ export class GameApp extends LitElement {
   @state()
   private _gameInProgress = false;
 
-  @state()
-  private _overlayTimeout;
-
   @queryAssignedElements({selector: 'turn-counter'})
   _turnCounter!: Array<HTMLElement>;
 
@@ -106,11 +103,6 @@ export class GameApp extends LitElement {
 
       this.diceOverlay.number = rolledNumber;
       this.diceOverlay.visible = true;
-
-      // clearTimeout(this._overlayTimeout);
-      // this._overlayTimeout = setTimeout(() => {
-      //   this.diceOverlay.visible = false;
-      // }, 4000);
     }
   }
 
