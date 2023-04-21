@@ -77,7 +77,11 @@ export class DiceOverlay extends LitElement {
       default:
         diceOne = Math.floor(number / 2);
     }
-    const diceTwo = number - diceOne;
+    let diceTwo = number - diceOne;
+    const finalRandomizer = Math.floor(Math.random() * 2);
+    diceOne = finalRandomizer == 0 ? diceOne : diceTwo;
+    diceTwo = number - diceOne;
+
 
     const diceOneColor = dualRandomizer == 0 ? 'yellow' : 'red';
     const diceTwoColor = diceOneColor == 'yellow' ? 'red' : 'yellow';
