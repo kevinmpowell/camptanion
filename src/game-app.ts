@@ -43,11 +43,17 @@ export class GameApp extends LitElement {
   @state()
   private _playerTurnIndex: number = 0;
 
+  @state()
+  private _showGameStartOverlay: boolean = false;
+
   @queryAssignedElements({selector: 'turn-counter'})
   _turnCounter!: Array<HTMLElement>;
 
   @query('dice-overlay')
   diceOverlay!: HTMLElement;
+
+  @query('game-start-overlay')
+  gameStartOverlay!: HTMLElement;
 
   get gameState() {
     const savedGameState = localStorage.getItem("boardGameScoreboardData");
@@ -73,10 +79,6 @@ export class GameApp extends LitElement {
     let game: Game | null = this.unfinishedGame;
     if (!game) {
       game = this.createNewGame();
-    }
-
-    if (!game.start) {
-      game.start = Date.now();
     }
 
     this.saveGame(game);
@@ -128,8 +130,6 @@ export class GameApp extends LitElement {
       this.diceOverlay.number = rolledNumber;
       this.diceOverlay.playerName = turnPlayer.name;
       this.diceOverlay.visible = true;
-
-
     }
   }
 
@@ -142,6 +142,7 @@ export class GameApp extends LitElement {
 
   loadActiveGameState() {
     const game = this.activeGame;
+
     const turnCounter = this.renderRoot.querySelector("turn-counter");
     turnCounter.counter = game.rollLog.length;
     const numberCounts = {
@@ -171,8 +172,16 @@ export class GameApp extends LitElement {
       rollButton.frequency = frequency;
     }
 
-    this._playerTurnIndex = game.rollLog.length % this.activeGamePlayers.length;
+    this._playerTurnIndex = game.rollLog.length % this.activeGamePlayers.length; // Figures out who's turn it is when the game is loaded (good for refreshing the page)
 
+    console.log(game.start);
+
+    if (game.start == undefined) {
+      console.log(this.gameStartOverlay);
+      this.gameStartOverlay.visible = true;
+    } else {
+      this.gameStartOverlay.visible = false;
+    }
     // console.log("TURN", game.rollLog.length % this.activeGamePlayers.length);
   }
 
@@ -187,26 +196,36 @@ export class GameApp extends LitElement {
     this.loadActiveGameState();
   }
 
+  handleStartNewGame() {
+    console.log("START IT UP!")
+    const game = this.activeGame;
+    game.start = Date.now();
+    this.saveGame(game);
+    this.loadActiveGameState();
+  }
+
   render() {
     return html`<div
       @click="${this.handleGameClick}"
       @undoroll=${this.handleUndo}
+      @startnewgame=${this.handleStartNewGame}
     >
-    <turn-counter>
-      <roll-button highlight number="2"></roll-button>
-      <roll-button number="3"></roll-button>
-      <roll-button number="4"></roll-button>
-      <roll-button number="5"></roll-button>
-      <roll-button number="6"></roll-button>
-      <roll-button number="7"></roll-button>
-      <roll-button number="8"></roll-button>
-      <roll-button number="9"></roll-button>
-      <roll-button number="10"></roll-button>
-      <roll-button number="11"></roll-button>
-      <roll-button number="12"></roll-button>
-    </turn-counter>
-    <button class="game-app__end-game" @click=${this.handleGameEnd}>End Game</button>
-    <dice-overlay></dice-overlay>
+      <turn-counter>
+        <roll-button highlight number="2"></roll-button>
+        <roll-button number="3"></roll-button>
+        <roll-button number="4"></roll-button>
+        <roll-button number="5"></roll-button>
+        <roll-button number="6"></roll-button>
+        <roll-button number="7"></roll-button>
+        <roll-button number="8"></roll-button>
+        <roll-button number="9"></roll-button>
+        <roll-button number="10"></roll-button>
+        <roll-button number="11"></roll-button>
+        <roll-button number="12"></roll-button>
+      </turn-counter>
+      <button class="game-app__end-game" @click=${this.handleGameEnd}>End Game</button>
+      <dice-overlay></dice-overlay>
+      <game-start-overlay></game-start-overlay>
     </div>`;
   }
 }
