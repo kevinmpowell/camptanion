@@ -1004,6 +1004,7 @@
       super(...arguments);
       this.number = 11;
       this.visible = false;
+      this.playerName = "Klaus";
     }
     renderDice(number) {
       const dualRandomizer = Math.floor(Math.random() * 2);
@@ -1045,7 +1046,12 @@
       class="dice-overlay ${this.visible !== false ? "dice-overlay--visible" : ""}"
       @click="${(e8) => this.visible = false}">
       <div class="dice-overlay__wrap">
-        ${this.renderDice(this.number)}
+        <div class="dice-overlay__dice-wrap">
+          ${this.renderDice(this.number)}
+        </div>
+        <div class="dice-overlay__player-wrap">
+          ${this.playerName}
+        </div>
       </div>
     </div>`;
     }
@@ -1065,11 +1071,12 @@
       visibility: hidden;
     }
 
-    .dice-overlay__wrap {
+    .dice-overlay__dice-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6vw;
+      margin-block-end: 2vh;
     }
 
     .dice-overlay__dice {
@@ -1089,6 +1096,14 @@
     .dice-overlay--visible {
       visibility: visible;
     }
+
+    .dice-overlay__player-wrap {
+      color: white;
+      flex: 0 0 100%;
+      text-align: center;
+      font-family: Georgia, serif;
+      font-size: 100px;
+    }
   `;
   __decorateClass([
     e5()
@@ -1096,15 +1111,77 @@
   __decorateClass([
     e5()
   ], DiceOverlay.prototype, "visible", 2);
+  __decorateClass([
+    e5()
+  ], DiceOverlay.prototype, "playerName", 2);
   DiceOverlay = __decorateClass([
     e4("dice-overlay")
   ], DiceOverlay);
+
+  // src/game-start-overlay.ts
+  var GameStartOverlay = class extends s4 {
+    constructor() {
+      super(...arguments);
+      this.visible = false;
+    }
+    handleStartGameClick(e8) {
+      this.dispatchEvent(new Event("startnewgame", { bubbles: true }));
+    }
+    render() {
+      return x`<div class="game-start-overlay ${this.visible !== false ? "game-start-overlay--visible" : ""}">
+      <h1>Welcome to Camptanion!</h1>
+      <button class="game-start-overlay__new-game-button" @click=${this.handleStartGameClick}>Start New Game</button>
+    </div>`;
+    }
+  };
+  GameStartOverlay.styles = i`
+    .game-start-overlay {
+      position: absolute;
+      height: 100vh;
+      width: 100vw;
+      box-sizing: border-box;
+      inset-block-start: 0;
+      inset-inline-start: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      color: white;
+      text-align: center;
+      font-family: Georgia, serif;
+      font-size: 48px;
+    }
+
+    .game-start-overlay--visible {
+      visibility: visible;
+    }
+
+    .game-start-overlay__new-game-button {
+      display: block;
+      font-size: 16px;
+      height: 40px;
+      border: none;
+      border-radius: 20px;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+  `;
+  __decorateClass([
+    e5()
+  ], GameStartOverlay.prototype, "visible", 2);
+  GameStartOverlay = __decorateClass([
+    e4("game-start-overlay")
+  ], GameStartOverlay);
 
   // src/game-app.ts
   var GameApp = class extends s4 {
     constructor() {
       super(...arguments);
-      this._gameInProgress = false;
+      this._playerTurnIndex = 0;
+      this._showGameStartOverlay = false;
     }
     get gameState() {
       const savedGameState = localStorage.getItem("boardGameScoreboardData");
@@ -1127,11 +1204,14 @@
       if (!game) {
         game = this.createNewGame();
       }
-      if (!game.start) {
-        game.start = Date.now();
-      }
       this.saveGame(game);
       return game;
+    }
+    get activeGamePlayers() {
+      return [{ name: "Kevin" }, { name: "Sara" }, { name: "Anna" }];
+    }
+    get currentPlayer() {
+      return this.activeGamePlayers[this._playerTurnIndex];
     }
     saveGame(game) {
       const gameState = this.gameState;
@@ -1150,12 +1230,19 @@
     }
     handleGameClick(e8) {
       if (e8.target.nodeName === "ROLL-BUTTON") {
+        const turnPlayer = this.currentPlayer;
         const game = this.activeGame;
         const rolledNumber = e8.target.number;
-        game.rollLog.push(rolledNumber);
+        console.log(this._playerTurnIndex);
+        console.log(`${turnPlayer.name} rolled a ${rolledNumber}`, this._playerTurnIndex);
+        game.rollLog.push({
+          number: rolledNumber,
+          player: turnPlayer
+        });
         this.saveGame(game);
         this.loadActiveGameState();
         this.diceOverlay.number = rolledNumber;
+        this.diceOverlay.playerName = turnPlayer.name;
         this.diceOverlay.visible = true;
       }
     }
@@ -1182,8 +1269,8 @@
         "11": 0,
         "12": 0
       };
-      game.rollLog.forEach((roll) => {
-        numberCounts[roll] = numberCounts[roll] + 1;
+      game.rollLog.forEach(({ number }) => {
+        numberCounts[number] = numberCounts[number] + 1;
       });
       for (const diceNumber in numberCounts) {
         const rollButton = turnCounter.querySelector(
@@ -1193,6 +1280,14 @@
         const frequency = numberCount / game.rollLog.length;
         rollButton.counter = numberCounts[diceNumber];
         rollButton.frequency = frequency;
+      }
+      this._playerTurnIndex = game.rollLog.length % this.activeGamePlayers.length;
+      console.log(game.start);
+      if (game.start == void 0) {
+        console.log(this.gameStartOverlay);
+        this.gameStartOverlay.visible = true;
+      } else {
+        this.gameStartOverlay.visible = false;
       }
     }
     firstUpdated() {
@@ -1204,26 +1299,35 @@
       this.saveGame(game);
       this.loadActiveGameState();
     }
+    handleStartNewGame() {
+      console.log("START IT UP!");
+      const game = this.activeGame;
+      game.start = Date.now();
+      this.saveGame(game);
+      this.loadActiveGameState();
+    }
     render() {
       return x`<div
       @click="${this.handleGameClick}"
       @undoroll=${this.handleUndo}
+      @startnewgame=${this.handleStartNewGame}
     >
-    <turn-counter>
-      <roll-button highlight number="2"></roll-button>
-      <roll-button number="3"></roll-button>
-      <roll-button number="4"></roll-button>
-      <roll-button number="5"></roll-button>
-      <roll-button number="6"></roll-button>
-      <roll-button number="7"></roll-button>
-      <roll-button number="8"></roll-button>
-      <roll-button number="9"></roll-button>
-      <roll-button number="10"></roll-button>
-      <roll-button number="11"></roll-button>
-      <roll-button number="12"></roll-button>
-    </turn-counter>
-    <button class="game-app__end-game" @click=${this.handleGameEnd}>End Game</button>
-    <dice-overlay></dice-overlay>
+      <turn-counter>
+        <roll-button highlight number="2"></roll-button>
+        <roll-button number="3"></roll-button>
+        <roll-button number="4"></roll-button>
+        <roll-button number="5"></roll-button>
+        <roll-button number="6"></roll-button>
+        <roll-button number="7"></roll-button>
+        <roll-button number="8"></roll-button>
+        <roll-button number="9"></roll-button>
+        <roll-button number="10"></roll-button>
+        <roll-button number="11"></roll-button>
+        <roll-button number="12"></roll-button>
+      </turn-counter>
+      <button class="game-app__end-game" @click=${this.handleGameEnd}>End Game</button>
+      <dice-overlay></dice-overlay>
+      <game-start-overlay></game-start-overlay>
     </div>`;
     }
   };
@@ -1248,16 +1352,19 @@
   `;
   __decorateClass([
     t3()
-  ], GameApp.prototype, "_gameInProgress", 2);
+  ], GameApp.prototype, "_playerTurnIndex", 2);
   __decorateClass([
     t3()
-  ], GameApp.prototype, "_overlayTimeout", 2);
+  ], GameApp.prototype, "_showGameStartOverlay", 2);
   __decorateClass([
     l4({ selector: "turn-counter" })
   ], GameApp.prototype, "_turnCounter", 2);
   __decorateClass([
     i4("dice-overlay")
   ], GameApp.prototype, "diceOverlay", 2);
+  __decorateClass([
+    i4("game-start-overlay")
+  ], GameApp.prototype, "gameStartOverlay", 2);
   GameApp = __decorateClass([
     e4("game-app")
   ], GameApp);
