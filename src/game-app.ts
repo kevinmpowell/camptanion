@@ -107,10 +107,10 @@ export class GameApp extends LitElement {
       this.diceOverlay.number = rolledNumber;
       this.diceOverlay.visible = true;
 
-      clearTimeout(this._overlayTimeout);
-      this._overlayTimeout = setTimeout(() => {
-        this.diceOverlay.visible = false;
-      }, 4000);
+      // clearTimeout(this._overlayTimeout);
+      // this._overlayTimeout = setTimeout(() => {
+      //   this.diceOverlay.visible = false;
+      // }, 4000);
     }
   }
 

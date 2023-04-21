@@ -1157,10 +1157,6 @@
         this.loadActiveGameState();
         this.diceOverlay.number = rolledNumber;
         this.diceOverlay.visible = true;
-        clearTimeout(this._overlayTimeout);
-        this._overlayTimeout = setTimeout(() => {
-          this.diceOverlay.visible = false;
-        }, 4e3);
       }
     }
     handleUndo(e8) {
