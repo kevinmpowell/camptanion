@@ -1,0 +1,7 @@
+{
+  "name": "Camptanion",
+  "short_name": "Camptanion",
+  "start_url": ".",
+  "display": "standalone",
+  "description": "A Catan companion"
+}
