@@ -53,7 +53,6 @@ export class GameStartOverlay extends LitElement {
   }
 
   render() {
-    console.log("GSO", this.players);
     return html`<div class="game-start-overlay ${this.visible !== false ? "game-start-overlay--visible" : ""}" @updateplayernames=${this.sanityCheck}>
       <h1>Welcome to Camptanion!</h1>
       <player-list players="${JSON.stringify(this.players)}"></player-list>
