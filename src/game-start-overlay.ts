@@ -36,19 +36,27 @@ export class GameStartOverlay extends LitElement {
       padding: 0 20px;
       box-sizing: border-box;
     }
-
   `;
 
   @property()
   visible:boolean = false;
 
+  @property({type: Array})
+  players = [{name: 'Fred'}];
+
   handleStartGameClick(e) {
     this.dispatchEvent(new Event('startnewgame', {bubbles: true}));
   }
 
+  sanityCheck(e) {
+    this.dispatchEvent(new CustomEvent('updateplayernames', {bubbles: true, detail: e.detail}));
+  }
+
   render() {
-    return html`<div class="game-start-overlay ${this.visible !== false ? "game-start-overlay--visible" : ""}">
+    console.log("GSO", this.players);
+    return html`<div class="game-start-overlay ${this.visible !== false ? "game-start-overlay--visible" : ""}" @updateplayernames=${this.sanityCheck}>
       <h1>Welcome to Camptanion!</h1>
+      <player-list players="${JSON.stringify(this.players)}"></player-list>
       <button class="game-start-overlay__new-game-button" @click=${this.handleStartGameClick}>Start New Game</button>
     </div>`;
   }

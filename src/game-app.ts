@@ -86,7 +86,7 @@ export class GameApp extends LitElement {
   }
 
   get activeGamePlayers() {
-    return [{name: 'Kevin'}, {name: 'Sara'}, { name: 'Anna'}];
+    return this.activeGame.players || [];
   }
 
   get currentPlayer() {
@@ -178,6 +178,7 @@ export class GameApp extends LitElement {
 
     if (game.start == undefined) {
       console.log(this.gameStartOverlay);
+      this.gameStartOverlay.players = this.activeGamePlayers;
       this.gameStartOverlay.visible = true;
     } else {
       this.gameStartOverlay.visible = false;
@@ -204,11 +205,20 @@ export class GameApp extends LitElement {
     this.loadActiveGameState();
   }
 
+  handlePlayerNamesUpdate(e) {
+    console.log("RECEIVED", e.detail);
+    const game = this.activeGame;
+    game.players = e.detail;
+    this.saveGame(game);
+    this.loadActiveGameState();
+  }
+
   render() {
     return html`<div
       @click="${this.handleGameClick}"
       @undoroll=${this.handleUndo}
       @startnewgame=${this.handleStartNewGame}
+      @updateplayernames=${this.handlePlayerNamesUpdate}
     >
       <turn-counter>
         <roll-button highlight number="2"></roll-button>
