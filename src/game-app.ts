@@ -1,11 +1,21 @@
 import { LitElement, html, css } from "lit";
 import { customElement, state, queryAssignedElements, query } from "lit/decorators.js";
 
+type Player = {
+  name: string;
+}
+
+type Roll = {
+  number: number;
+  player: Player;
+}
+
 type Game = {
   id: number;
   start?: number;
   end?: number;
-  rollLog: number[];
+  players?: Player[];
+  rollLog: Roll[];
 };
 
 @customElement("game-app")
@@ -31,7 +41,7 @@ export class GameApp extends LitElement {
   `;
 
   @state()
-  private _gameInProgress = false;
+  private _playerTurnIndex: number = 0;
 
   @queryAssignedElements({selector: 'turn-counter'})
   _turnCounter!: Array<HTMLElement>;
@@ -73,6 +83,14 @@ export class GameApp extends LitElement {
     return game;
   }
 
+  get activeGamePlayers() {
+    return [{name: 'Kevin'}, {name: 'Sara'}, { name: 'Anna'}];
+  }
+
+  get currentPlayer() {
+    return this.activeGamePlayers[this._playerTurnIndex];
+  }
+
   saveGame(game: Game) {
     const gameState = this.gameState;
     gameState.games[game.id] = game;
@@ -95,14 +113,23 @@ export class GameApp extends LitElement {
   handleGameClick(e) {
     // If a roll button is clicked, get the current game, make sure it's started, and log the dice roll
     if (e.target.nodeName === "ROLL-BUTTON") {
+      const turnPlayer = this.currentPlayer;
       const game = this.activeGame;
       const rolledNumber = e.target.number;
-      game.rollLog.push(rolledNumber);
+      console.log(this._playerTurnIndex);
+      console.log(`${turnPlayer.name} rolled a ${rolledNumber}`, this._playerTurnIndex);
+      game.rollLog.push({
+        number: rolledNumber,
+        player: turnPlayer
+      });
       this.saveGame(game);
       this.loadActiveGameState();
 
       this.diceOverlay.number = rolledNumber;
+      this.diceOverlay.playerName = turnPlayer.name;
       this.diceOverlay.visible = true;
+
+
     }
   }
 
@@ -130,9 +157,10 @@ export class GameApp extends LitElement {
       "11": 0,
       "12": 0
     };
-    game.rollLog.forEach((roll) => {
-      numberCounts[roll] = numberCounts[roll] + 1;
+    game.rollLog.forEach(({ number }) => {
+      numberCounts[number] = numberCounts[number] + 1;
     });
+
     for (const diceNumber in numberCounts) {
       const rollButton = turnCounter.querySelector(
         `roll-button[number="${diceNumber}"]`
@@ -142,6 +170,10 @@ export class GameApp extends LitElement {
       rollButton.counter = numberCounts[diceNumber];
       rollButton.frequency = frequency;
     }
+
+    this._playerTurnIndex = game.rollLog.length % this.activeGamePlayers.length;
+
+    // console.log("TURN", game.rollLog.length % this.activeGamePlayers.length);
   }
 
   firstUpdated() {

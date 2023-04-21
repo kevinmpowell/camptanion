@@ -18,11 +18,12 @@ export class DiceOverlay extends LitElement {
       visibility: hidden;
     }
 
-    .dice-overlay__wrap {
+    .dice-overlay__dice-wrap {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6vw;
+      margin-block-end: 2vh;
     }
 
     .dice-overlay__dice {
@@ -42,6 +43,14 @@ export class DiceOverlay extends LitElement {
     .dice-overlay--visible {
       visibility: visible;
     }
+
+    .dice-overlay__player-wrap {
+      color: white;
+      flex: 0 0 100%;
+      text-align: center;
+      font-family: Georgia, serif;
+      font-size: 100px;
+    }
   `;
 
   @property()
@@ -49,6 +58,9 @@ export class DiceOverlay extends LitElement {
 
   @property()
   visible:boolean = false;
+
+  @property()
+  playerName?:string = 'Klaus';
 
   renderDice(number:2|3|4|5|6|7|8|9|10|11|12) {
     // const diceOne = Math.floor(number / 2);
@@ -94,7 +106,12 @@ export class DiceOverlay extends LitElement {
       class="dice-overlay ${this.visible !== false ? "dice-overlay--visible" : ""}"
       @click="${(e) => this.visible = false}">
       <div class="dice-overlay__wrap">
-        ${this.renderDice(this.number)}
+        <div class="dice-overlay__dice-wrap">
+          ${this.renderDice(this.number)}
+        </div>
+        <div class="dice-overlay__player-wrap">
+          ${this.playerName}
+        </div>
       </div>
     </div>`;
   }
