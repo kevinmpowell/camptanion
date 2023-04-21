@@ -26,6 +26,7 @@ export class GameApp extends LitElement {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
+      padding: 10px;
     }
 
     .game-app__end-game {
@@ -219,6 +220,7 @@ export class GameApp extends LitElement {
       @undoroll=${this.handleUndo}
       @startnewgame=${this.handleStartNewGame}
       @updateplayernames=${this.handlePlayerNamesUpdate}
+      class="game-app"
     >
       <turn-counter>
         <roll-button highlight number="2"></roll-button>

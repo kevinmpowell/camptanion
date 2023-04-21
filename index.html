@@ -4,11 +4,22 @@
     <meta charset="UTF-8" />
     <script src="build/index.js"></script>
     <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        position: fixed;
+      }
+
       body {
         background: #333;
-        max-height: 100%;
-        width: 100vw;
-        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      * {
+        box-sizing: border-box;
       }
     </style>
     <script>
