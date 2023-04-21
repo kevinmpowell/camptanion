@@ -742,26 +742,25 @@
     .dice-image__dot {
       height: 4vw;
       width: 4vw;
-      background: blue;
       border-radius: 2vw;
       flex-shrink: 0;
       flex-grow: 0;
     }
 
     .dice-image--red {
-      background: red;
+      background: #C74824;
     }
 
     .dice-image--red .dice-image__dot {
-      background: yellow;
+      background: #EDD861;
     }
 
     .dice-image--yellow {
-      background: yellow;
+      background: #EDD861;
     }
 
     .dice-image--yellow .dice-image__dot {
-      background: red;
+      background: #C74824;
     }
   `;
   __decorateClass([
@@ -893,7 +892,7 @@
     }
 
     .roll-button--highlight {
-      color: darkred;
+      color: #C74824;
     }
 
     .roll-button__frequency-indicator {
@@ -906,10 +905,12 @@
       width: ${r(buttonSize / 15)}px;
       border-radius: ${r(buttonSize / 15 / 2)}px;
       background: black;
+      flex-shrink: 0;
+      flex-grow: 0;
     }
 
     .roll-button--highlight .roll-button__frequency-dot {
-      background: darkred;
+      background: #C74824;
     }
   `;
   __decorateClass([
@@ -1231,6 +1232,13 @@
     }
   };
   GameApp.styles = i`
+    .game-app {
+      box-sizing: border-box;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
     .game-app__end-game {
       margin-block-start: 10px;
       display: block;

@@ -46,26 +46,25 @@ export class DiceImage extends LitElement {
     .dice-image__dot {
       height: 4vw;
       width: 4vw;
-      background: blue;
       border-radius: 2vw;
       flex-shrink: 0;
       flex-grow: 0;
     }
 
     .dice-image--red {
-      background: red;
+      background: #C74824;
     }
 
     .dice-image--red .dice-image__dot {
-      background: yellow;
+      background: #EDD861;
     }
 
     .dice-image--yellow {
-      background: yellow;
+      background: #EDD861;
     }
 
     .dice-image--yellow .dice-image__dot {
-      background: red;
+      background: #C74824;
     }
   `;
 

@@ -45,7 +45,7 @@ export class RollButton extends LitElement {
     }
 
     .roll-button--highlight {
-      color: darkred;
+      color: #C74824;
     }
 
     .roll-button__frequency-indicator {
@@ -58,10 +58,12 @@ export class RollButton extends LitElement {
       width: ${unsafeCSS(buttonSize/15)}px;
       border-radius: ${unsafeCSS(buttonSize/15/2)}px;
       background: black;
+      flex-shrink: 0;
+      flex-grow: 0;
     }
 
     .roll-button--highlight .roll-button__frequency-dot {
-      background: darkred;
+      background: #C74824;
     }
   `;
 

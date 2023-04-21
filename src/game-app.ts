@@ -11,6 +11,13 @@ type Game = {
 @customElement("game-app")
 export class GameApp extends LitElement {
   static styles = css`
+    .game-app {
+      box-sizing: border-box;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
     .game-app__end-game {
       margin-block-start: 10px;
       display: block;
