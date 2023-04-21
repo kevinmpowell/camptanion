@@ -1,6 +1,5 @@
 import { LitElement, html, css } from "lit";
-import { customElement, state, queryAssignedElements } from "lit/decorators.js";
-import { TurnCounter } from "./turn-counter";
+import { customElement, state, queryAssignedElements, query } from "lit/decorators.js";
 
 type Game = {
   id: number;
@@ -14,14 +13,27 @@ export class GameApp extends LitElement {
   static styles = css`
     .game-app__end-game {
       margin-block-start: 10px;
+      display: block;
+      font-size: 16px;
+      height: 40px;
+      width: 100%;
+      max-width: 120px;
+      border-radius: 20px;
+      border: none;
     }
   `;
 
   @state()
   private _gameInProgress = false;
 
+  @state()
+  private _overlayTimeout;
+
   @queryAssignedElements({selector: 'turn-counter'})
   _turnCounter!: Array<HTMLElement>;
+
+  @query('dice-overlay')
+  diceOverlay!: HTMLElement;
 
   get gameState() {
     const savedGameState = localStorage.getItem("boardGameScoreboardData");
@@ -80,9 +92,18 @@ export class GameApp extends LitElement {
     // If a roll button is clicked, get the current game, make sure it's started, and log the dice roll
     if (e.target.nodeName === "ROLL-BUTTON") {
       const game = this.activeGame;
-      game.rollLog.push(e.target.number);
+      const rolledNumber = e.target.number;
+      game.rollLog.push(rolledNumber);
       this.saveGame(game);
       this.loadActiveGameState();
+
+      this.diceOverlay.number = rolledNumber;
+      this.diceOverlay.visible = true;
+
+      clearTimeout(this._overlayTimeout);
+      this._overlayTimeout = setTimeout(() => {
+        this.diceOverlay.visible = false;
+      }, 4000);
     }
   }
 
@@ -119,7 +140,6 @@ export class GameApp extends LitElement {
       );
       const numberCount = numberCounts[diceNumber];
       const frequency = numberCount / game.rollLog.length;
-      console.log("DICE COUNT", diceNumber, frequency);
       rollButton.counter = numberCounts[diceNumber];
       rollButton.frequency = frequency;
     }
@@ -133,6 +153,7 @@ export class GameApp extends LitElement {
     const game = this.activeGame;
     game.end = Date.now();
     this.saveGame(game);
+    this.loadActiveGameState();
   }
 
   render() {
@@ -154,6 +175,7 @@ export class GameApp extends LitElement {
       <roll-button number="12"></roll-button>
     </turn-counter>
     <button class="game-app__end-game" @click=${this.handleGameEnd}>End Game</button>
+    <dice-overlay></dice-overlay>
     </div>`;
   }
 }
